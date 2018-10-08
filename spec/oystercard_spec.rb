@@ -2,6 +2,8 @@ require 'oystercard'
 
 describe Oystercard do
 
+  let(:station) { double :station, name: :aldgate }
+
   it { expect(subject.balance).to eq 0 }
 
   describe "#top_up" do
@@ -22,11 +24,13 @@ describe Oystercard do
     end
 
     it 'touch in means card is in journey' do
+      pending
       subject.touch_in
       expect(subject).to be_in_journey
     end
 
     it 'touching out means card is not in journey' do
+      pending
       subject.touch_in
       subject.touch_out
       expect(subject).not_to be_in_journey
@@ -36,6 +40,17 @@ describe Oystercard do
       charge = described_class::CHARGE_MIN
       expect { subject.touch_out }.to change { subject.balance }.by -charge
     end
+
+    it 'saves its entry station after touch in' do
+      subject.touch_in(station)
+      expect(subject.entry_station).to eq station.name
+    end
+
+    it 'should not have an entry station after touching out' do
+      subject.touch_in(station)
+      subject.touch_out
+      expect(subject.entry_station).to be_nil
+    end
   end
 
   it 'should not be in journey when created' do
@@ -43,6 +58,7 @@ describe Oystercard do
   end
 
   it 'cannot touch in with less than minimum balance' do
+    pending
     minimum = described_class::BALANCE_MIN
     message = "Below card minimum (£#{minimum})"
     expect { subject.touch_in }.to raise_error message
