@@ -3,6 +3,8 @@ require 'oystercard'
 describe Oystercard do
 
   let(:station) { double :station, name: :aldgate }
+  let(:station_2) { double :station, name: :euston }
+  let(:journey_1) { { entry: station.name, exit: station_2.name } }
 
   it { expect(subject.balance).to eq 0 }
 
@@ -30,13 +32,13 @@ describe Oystercard do
 
     it 'touching out means card is not in journey' do
       subject.touch_in(station)
-      subject.touch_out
+      subject.touch_out(station_2)
       expect(subject).not_to be_in_journey
     end
 
     it 'deducts fare on touching out' do
       charge = described_class::CHARGE_MIN
-      expect { subject.touch_out }.to change { subject.balance }.by -charge
+      expect { subject.touch_out(station) }.to change { subject.balance }.by -charge
     end
 
     it 'saves its entry station after touch in' do
@@ -46,8 +48,14 @@ describe Oystercard do
 
     it 'should not have an entry station after touching out' do
       subject.touch_in(station)
-      subject.touch_out
+      subject.touch_out(station_2)
       expect(subject.entry_station).to be_nil
+    end
+
+    it 'should store a journey in its list of journeys' do
+      subject.touch_in(station)
+      subject.touch_out(station_2)
+      expect(subject.journeys).to include journey_1
     end
   end
 
@@ -59,6 +67,10 @@ describe Oystercard do
     minimum = described_class::BALANCE_MIN
     message = "Below card minimum (£#{minimum})"
     expect { subject.touch_in(station) }.to raise_error message
+  end
+
+  it 'should be created with an accessible list of previous journeys' do
+    expect(subject.journeys).to be_empty
   end
 
 end
