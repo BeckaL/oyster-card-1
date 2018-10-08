@@ -31,11 +31,11 @@ describe Oystercard do
       subject.touch_out
       expect(subject).not_to be_in_journey
     end
-  end
 
-  it 'deducts fare from balance' do
-    subject.top_up(10)
-    expect { subject.deduct_fare(3) }.to change { subject.balance }.by -3
+    it 'deducts fare on touching out' do
+      charge = described_class::CHARGE_MIN
+      expect { subject.touch_out }.to change { subject.balance }.by -charge
+    end
   end
 
   it 'should not be in journey when created' do
