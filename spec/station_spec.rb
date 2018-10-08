@@ -3,7 +3,7 @@ require 'station'
 describe Station do
 
 
-  let(:station_1) { Station.new(:aldgate, 1) }
+  let(:station_1) { described_class.new(:aldgate, 1) }
 
   it 'should have a name when created' do
     expect(station_1.name).to eq :aldgate
