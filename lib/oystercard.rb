@@ -17,17 +17,15 @@ class Oystercard
   end
 
   def in_journey?
-    @in_journey
+    !!@entry_station
   end
 
   def touch_in(station)
     raise "Below card minimum (£#{BALANCE_MIN})" if balance < BALANCE_MIN
-    @in_journey = true
     @entry_station = station.name
   end
 
   def touch_out
-    @in_journey = false
     deduct_fare(CHARGE_MIN)
     @entry_station = nil
   end

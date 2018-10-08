@@ -24,14 +24,12 @@ describe Oystercard do
     end
 
     it 'touch in means card is in journey' do
-      pending
-      subject.touch_in
+      subject.touch_in(station)
       expect(subject).to be_in_journey
     end
 
     it 'touching out means card is not in journey' do
-      pending
-      subject.touch_in
+      subject.touch_in(station)
       subject.touch_out
       expect(subject).not_to be_in_journey
     end
@@ -58,10 +56,9 @@ describe Oystercard do
   end
 
   it 'cannot touch in with less than minimum balance' do
-    pending
     minimum = described_class::BALANCE_MIN
     message = "Below card minimum (£#{minimum})"
-    expect { subject.touch_in }.to raise_error message
+    expect { subject.touch_in(station) }.to raise_error message
   end
 
 end
