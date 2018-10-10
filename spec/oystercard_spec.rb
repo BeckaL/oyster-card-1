@@ -37,7 +37,7 @@ describe Oystercard do
     end
 
     it 'deducts fare on touching out' do
-      charge = described_class::CHARGE_MIN
+      charge = CHARGE_MIN
       expect { subject.touch_out(station) }.to change { subject.balance }.by -charge
     end
 
