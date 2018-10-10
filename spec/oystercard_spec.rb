@@ -2,9 +2,9 @@ require 'oystercard'
 
 describe Oystercard do
 
-  let(:station) { double :station, name: :aldgate }
-  let(:station_2) { double :station, name: :euston }
-  let(:journey_1) { { entry: station.name, exit: station_2.name } }
+  let(:station) { double :station, name: :aldgate, zone: 1 }
+  let(:station_2) { double :station, name: :euston, zone: 1 }
+  let(:current_journey) { { entry: station.name, entry_zone: station.zone, exit: station_2.name, exit_zone: station_2.zone } }
 
   it { expect(subject.balance).to eq 0 }
 
@@ -30,14 +30,14 @@ describe Oystercard do
       expect(subject).to be_in_journey
     end
 
-    it 'touching out means card is not in journey' do
-      subject.touch_in(station)
-      subject.touch_out(station_2)
-      expect(subject).not_to be_in_journey
-    end
-
     it 'deducts fare on touching out' do
+<<<<<<< HEAD
       charge = CHARGE_MIN
+=======
+      subject.current_journey = { entry: station.name, entry_zone: station.zone, exit: station_2.name, exit_zone: station_2.zone }
+      allow(subject.current_journey).to receive(:end)
+      charge = described_class::CHARGE_MIN
+>>>>>>> 99a62d19d257a6d852f1df1aeb7634ef7edb0247
       expect { subject.touch_out(station) }.to change { subject.balance }.by -charge
     end
 
@@ -46,17 +46,27 @@ describe Oystercard do
       expect(subject.entry_station).to eq station.name
     end
 
-    it 'should not have an entry station after touching out' do
+  end
+
+  context "completes one journey" do
+    before do
+      subject.top_up(10)
       subject.touch_in(station)
       subject.touch_out(station_2)
-      expect(subject.entry_station).to be_nil
     end
 
     it 'should store a journey in its list of journeys' do
-      subject.touch_in(station)
-      subject.touch_out(station_2)
-      expect(subject.journeys).to include journey_1
+      expect(subject.journeys).to include current_journey
     end
+
+    it 'should not have an entry station after touching out' do
+      expect(subject.entry_station).to be_nil
+    end
+
+    it 'touching out means card is not in journey' do
+      expect(subject).not_to be_in_journey
+    end
+
   end
 
   it 'should not be in journey when created' do
